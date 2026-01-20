@@ -1,0 +1,172 @@
+@import "tailwindcss";
+
+.logo{
+  font-family: "Meow Script", cursive;
+  font-size: 47px;
+  color:#641226;
+  font-weight:bolder;
+
+}
+.search{
+  border-radius: 20px;
+  color: white;
+}
+.ul{
+  gap: 2px;
+  font-weight: bold;
+  font-size: 19px;
+  /* text-decoration:underline white; */
+}
+
+  /* HERO */
+.hero {
+  height: 95vh;
+  background: linear-gradient(
+      rgba(255, 245, 248, 0.096),
+      rgba(255, 245, 248, 0.096)
+    ),
+    url(./assets/banner.jpg);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+}
+.hero-box {
+  text-align: center;
+  max-width: 600px;
+}
+
+.hero-box h1 {
+  font-size: 52px;
+  color: white;
+}
+
+.hero-box p {
+  margin: 15px 0;
+}
+
+.hero-box button {
+  background: #e56b9f;
+  border: none;
+  padding: 14px 34px;
+  border-radius: 30px;
+  color: white;
+}
+
+
+ /* Container for all cards */
+.card {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid */
+  gap: 1.5rem; /* space between cards */
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+/* Individual card styling */
+.card .bg-neutral-primary-soft {
+  background-color: #fff; /* or your soft brand color */
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Card hover effect */
+.card .bg-neutral-primary-soft:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+/* Card image */
+.card .bg-neutral-primary-soft img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+/* Card content */
+.card .p-6 {
+  padding: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+}
+
+/* Trending badge */
+.card span.inline-flex {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background-color: #ffe6f0;
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  
+}
+
+/* Card title */
+.card h5 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #800080; /* your brand color */
+}
+
+/* Read more button */
+.card a.inline-flex {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  background-color: #D35989;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.card a.inline-flex:hover {
+  background-color: #a02d5a;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .card .bg-neutral-primary-soft img {
+    height: 180px;
+  }
+}
+
+@media (max-width: 768px) {
+  .card .bg-neutral-primary-soft img {
+    height: 160px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    grid-template-columns: 1fr; /* single column for mobile */
+  }
+  .card .bg-neutral-primary-soft img {
+    height: 150px;
+  }
+}
+
+
+
+
+/* https://makeup-with-react.vercel.app/ */
+
+
