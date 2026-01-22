@@ -30,9 +30,13 @@ import card12 from './assets/card12.jpg';
 
 function App() {
    const [navbarOpen, setNavbarOpen] = useState(false);
+   const [cart, setCart] = useState([]);
+
+const [cartOpen, setCartOpen] = useState(false);
 
   const [search , setSearch] = useState("")  
 
+  // navbar section scrollIntoView code
   const sections = {
   services: "services",
   makeup: "makeup",
@@ -53,22 +57,76 @@ function App() {
   }
   }, [search]);
 
+  // ➕ Add to Cart
+  const addToCart = (product) => {
+    const existing = cart.find((item) => item.id === product.id);
+
+    if (existing) {
+      setCart(
+        cart.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        )
+      );
+    } else {
+      setCart([...cart, { ...product, quantity: 1 }]);
+    }
+  };
+
+  // ❌ Remove Item
+  const removeItem = (id) => {
+    setCart(cart.filter((item) => item.id !== id));
+  };
+
+  // 💰 Total
+  const totalAmount = cart.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
+  // ➕ Download Receipt
+const downloadReceipt = () => {
+  if (cart.length === 0) return alert("Cart is empty!");
+
+  let receiptText = `Beauty Care Salon\n`;
+  receiptText += `Date: ${new Date().toLocaleDateString()}\n\n`;
+
+  cart.forEach((item) => {
+    receiptText += `${item.name} x ${item.quantity} = Rs ${
+      item.price * item.quantity
+    }\n`;
+  });
+
+  receiptText += `\n----------------------\n`;
+  receiptText += `Total: Rs ${totalAmount}\n`;
+
+  const blob = new Blob([receiptText], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "receipt.txt"; // filename
+  a.click();
+
+  URL.revokeObjectURL(url);
+};
 
     
+  // Product Data code 
   const products = [
 
-     { id: 1, name: "Hydra Facial",category: "skin" ,   price: '20k', image:card1 } ,
-     { id: 2, name: "Gold Facial", category: "skin" ,  price: '35k' , image:card2} ,
-     { id: 3, name: "Skin polish", category: "skin" ,  price:'35k' ,image:card3} ,
-     { id: 4, name: "Herbal ", category: "skin" ,  price:'35k' ,image:card8} ,
-     { id: 5, name: "Messy PonyTail", category: "Hair style" ,  price:'15k' ,image:card4} ,
-     { id: 6, name: "Highlight", category: "Hair style"  ,  price:'25k' ,image:card5} ,
-     { id: 7, name: "For Long hair", category: "Hair style"  ,  price:'15k' ,image:card6} ,
-     { id: 8, name: "Straighten hair", category: "Hair style"  ,  price:'15k' ,image:card7},
-     { id: 9, name: "Bridal MakeUp ", category: "makeup" ,  price:'35k' ,image:card9} ,
-     { id: 10, name: "SoftLook MakeUp ", category: "makeup" ,  price:'25k' ,image:card10} ,
-     { id: 11, name: "Glamours MakeUp ", category: "makeup" ,  price:'35k' ,image:card11} ,
-     { id: 12, name: "Model MakeUp ", category: "makeup" ,  price:'35k' ,image:card12} ,
+     { id: 1, name: "Hydra Facial",category: "skin" ,   price: 12000, image:card1 } ,
+     { id: 2, name: "Gold Facial", category: "skin" ,  price: 17000 , image:card2} ,
+     { id: 3, name: "Skin polish", category: "skin" ,  price:11000 ,image:card3} ,
+     { id: 4, name: "Herbal ", category: "skin" ,  price:9000 ,image:card8} ,
+     { id: 5, name: "Messy PonyTail", category: "Hair style" ,  price:2500 ,image:card4} ,
+     { id: 6, name: "Highlight", category: "Hair style"  ,  price:6000 ,image:card5} ,
+     { id: 7, name: "For Long hair", category: "Hair style"  ,  price:7000,image:card6} ,
+     { id: 8, name: "Straighten hair", category: "Hair style"  ,  price:5000 ,image:card7},
+     { id: 9, name: "Bridal MakeUp ", category: "makeup" ,  price:35000 ,image:card9} ,
+     { id: 10, name: "SoftLook MakeUp ", category: "makeup" ,  price:20000 ,image:card10} ,
+     { id: 11, name: "Glamours MakeUp ", category: "makeup" ,  price:35000 ,image:card11} ,
+     { id: 12, name: "Model MakeUp ", category: "makeup" ,  price:35000 ,image:card12} ,
   ]
 
 const filteredProducts = products.filter((item) =>
@@ -79,83 +137,96 @@ const filteredProducts = products.filter((item) =>
 
   return (
     <>
-  
-<nav className="bg-neutral-primary fixed w-full z-20 top-0 start-0  border-gray-200 border-default bg-transparent">
-  <div className="max-w-7xl flex flex-wrap items-center justify-between mx-auto p-4">
-  <a href="https://flowbite.com/" className="flex items-center space-x-3 rtl:space-x-reverse">
-      
-      <span className="self-center text-xl text-heading font-semibold whitespace-nowrap logo" >Beauty Care</span>
-  </a>
-  <div className="flex items-center md:order-2">
-    <button type="button" data-collapse-toggle="navbar-search" aria-controls="navbar-search" aria-expanded="false" className="flex items-center justify-center md:hidden text-body hover:text-heading bg-transparent box-border border border-transparent hover:bg-neutral-secondary-medium focus:ring-2 focus:ring-neutral-tertiary font-medium leading-5 rounded-base text-sm w-10 h-10 focus:outline-none">
-      <svg className="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>
-      <span className="sr-only">Search</span>
-    </button>
-    <label for="input-group-1" className="sr-only">Your Email</label>
-    <div className="relative hidden md:block">
-      <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-        <svg className="w-4 h-4 text-body" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>
-      </div>
-      <input type="text" id="input-group-1" className="block w-full ps-9 pe-3 py-2\.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand px-2.5 py-2 shadow-xs placeholder:text-body search" placeholder="Search Services...."
-       value={search}
-        onChange={(e)=>setSearch(e.target.value)}/>
-    </div>
-<button
-  type="button"
-  className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-body rounded-base md:hidden hover:bg-neutral-secondary-soft hover:text-heading focus:outline-none focus:ring-2 focus:ring-neutral-tertiary"
-  onClick={() => setNavbarOpen(!navbarOpen)}
->
-  <span className="sr-only ">Open main menu</span>
-  <svg
-    className="w-6 h-6"
-    aria-hidden="true"
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    fill="none"
-    viewBox="0 0 24 24"
-     >
-    <path stroke="currentColor" strokeLinecap="round" strokeWidth="2" d="M5 7h14M5 12h14M5 17h14"/>
-  </svg>
-</button>
+  {/* navbar code */}
+<nav className="bg-neutral-primary fixed w-full z-20 top-0 start-0  border-default bg-[#e4d2d5] ">
+  <div className="max-w-7xl flex items-center justify-between mx-auto p-0 ">
+    
+    {/* LOGO */}
+    <a href="/" className="flex items-center">
+      <span className="text-xl font-semibold text-heading logo">Beauty Care</span>
+    </a>
 
-  </div>
-   <div className={`items-center justify-between ${navbarOpen ? "flex" : "hidden"} w-full md:flex md:w-auto md:order-1`} id="navbar-search">
-
-      <div className="relative mt-3 md:hidden">
-        <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-          <svg className="w-4 h-4 text-body" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>
-        </div>
-        <input type="text" id="input-group-1" className="block w-full ps-9 pe-3 py-2\.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand px-2.5 py-2 shadow-xs placeholder:text-body" placeholder="Search"/>
-      </div>
-      <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-default rounded-base bg-neutral-secondary-soft md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-neutral-primary ul">
-        <li>
-          <a href="#" className="block py-2 px-3 text-white bg-brand rounded md:bg-transparent md:text-fg-brand md:p-0 relative after:block after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-pink-500 after:transition-all after:duration-300 hover:after:w-full hover:text-pink-500" aria-current="page">Home</a>
-        </li>
-        <li>
-          <a href="#services" className="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-trannsparent text-white relative after:block after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-pink-500 after:transition-all after:duration-300 hover:after:w-full hover:text-pink-500">Services</a>
-        </li>
-        <li>
-          <a href="#makeup" className="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent text-white relative after:block after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-pink-500 after:transition-all after:duration-300 hover:after:w-full hover:text-pink-500">Makeup</a>
-        </li>
-        <li>
-          <a href="#hair" className="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent text-white relative after:block after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-pink-500 after:transition-all after:duration-300 hover:after:w-full hover:text-pink-500">Hair</a>
-        </li>
-       
-        <li>
-          <a href="#hand&feet" className="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent text-white relative after:block after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-pink-500 after:transition-all after:duration-300 hover:after:w-full hover:text-pink-500">Hand & Feet</a>
-        </li>
-        <li>
-          <a href="#offer" className="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent text-white relative after:block after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-pink-500 after:transition-all after:duration-300 hover:after:w-full hover:text-pink-500">Our Offer</a>
-        </li>
-      
-        <li>
-          <a href="contact" className="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent text-white relative after:block after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-pink-500 after:transition-all after:duration-300 hover:after:w-full hover:text-pink-500">Contact</a>
-        </li>
+    {/* MENU + SEARCH (center) */}
+    <div className="flex-1 flex justify-center items-center ul">
+      <ul className={`flex space-x-8 text-white font-medium 
+                      md:flex ${navbarOpen ? "flex flex-col space-y-2 absolute top-16 left-0 w-full bg-neutral-primary p-4 md:static md:flex-row md:space-x-8" : "hidden md:flex"}`}>
+        <li><a href="#" className="hover:text-pink-500 text-black text-semibold">Home</a></li>
+        <li><a href="#services" className="hover:text-pink-500 text-black">Services</a></li>
+        <li><a href="#makeup" className="hover:text-pink-500 text-black">Makeup</a></li>
+        <li><a href="#hair" className="hover:text-pink-500 text-black">Hair</a></li>
+        <li><a href="#hand&feet" className="hover:text-pink-500 text-black">Hand & Feet</a></li>
+        <li><a href="#offer" className="hover:text-pink-500 text-black">Offer</a></li>
+        <li><a href="#contact" className="hover:text-pink-500 text-black">Contact</a></li>
       </ul>
+
+      {/* SEARCH INPUT */}
+      <div className="hidden md:block ms-6 ">
+        <input
+          type="text"
+          placeholder="Search Services..."
+          className="px-3 py-1 rounded border search"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+    </div>
+
+    {/* RIGHT SIDE: Toggle + Cart */}
+    <div className="flex items-center space-x-2">
+      {/* TOGGLE BUTTON */}
+      <button
+        className="md:hidden p-2 rounded bg-gray-200"
+        onClick={() => setNavbarOpen(!navbarOpen)}
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+
+      {/* CART ICON */}
+      <div className="relative">
+        <button
+          onClick={() => setCartOpen(!cartOpen)}
+          className="relative p-2 text-pink-600 hover:bg-pink-100 rounded-full"
+        >
+          🛒
+          {cart.length > 0 && (
+            <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-xs px-1.5 rounded-full">
+              {cart.length}
+            </span>
+          )}
+        </button>
+
+        {/* CART DROPDOWN */}
+        {cartOpen && (
+          <div className="absolute right-0 mt-2 w-72 bg-white shadow-lg rounded-lg p-4 z-50">
+            <h3 className="font-bold mb-2 text-pink-600">Your Cart</h3>
+            {cart.length === 0 ? (
+              <p className="text-sm text-gray-500">Cart is empty</p>
+            ) : (
+              cart.map((item) => (
+                <div key={item.id} className="flex justify-between items-center mb-2 text-sm">
+                  <span>{item.name} × {item.quantity}</span>
+                  <span>Rs {item.price * item.quantity}</span>
+                  <button onClick={() => removeItem(item.id)} className="text-red-500 ml-2">❌</button>
+                </div>
+              ))
+            )}
+            {cart.length > 0 && (
+              <>
+                <hr className="my-2" />
+                <p className="font-semibold">Total: Rs {totalAmount}</p>
+                <button onClick={downloadReceipt} className="mt-2 w-full bg-green-500 text-white py-1 rounded">Download Receipt</button>
+              </>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   </div>
 </nav>
+
+
   {/* HERO */}
       <section className="hero">
         <div className="hero-box">
@@ -164,6 +235,9 @@ const filteredProducts = products.filter((item) =>
           <button>Book Appointment</button> */}
         </div>
       </section>
+
+
+      
 
       {/* services */}
 
@@ -231,18 +305,20 @@ const filteredProducts = products.filter((item) =>
         <img class="rounded-t-base" src= {item.image} />
     </a>
     <div className="p-6 text-center bg-[#FCEAEB]">
-        <span class="inline-flex items-center bg-brand-softer border border-brand-subtle text-fg-brand-strong text-xs font-medium px-1.5 py-0.5 rounded-sm">
-            <svg class="w-3 h-3 me-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.122 17.645a7.185 7.185 0 0 1-2.656 2.495 7.06 7.06 0 0 1-3.52.853 6.617 6.617 0 0 1-3.306-.718 6.73 6.73 0 0 1-2.54-2.266c-2.672-4.57.287-8.846.887-9.668A4.448 4.448 0 0 0 8.07 6.31 4.49 4.49 0 0 0 7.997 4c1.284.965 6.43 3.258 5.525 10.631 1.496-1.136 2.7-3.046 2.846-6.216 1.43 1.061 3.985 5.462 1.754 9.23Z"/></svg>
+        <span classN="inline-flex items-center bg-brand-softer border border-brand-subtle text-fg-brand-strong text-xs font-medium px-1.5 py-0.5 rounded-sm">
+            <svg className="w-3 h-3 me-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.122 17.645a7.185 7.185 0 0 1-2.656 2.495 7.06 7.06 0 0 1-3.52.853 6.617 6.617 0 0 1-3.306-.718 6.73 6.73 0 0 1-2.54-2.266c-2.672-4.57.287-8.846.887-9.668A4.448 4.448 0 0 0 8.07 6.31 4.49 4.49 0 0 0 7.997 4c1.284.965 6.43 3.258 5.525 10.631 1.496-1.136 2.7-3.046 2.846-6.216 1.43 1.061 3.985 5.462 1.754 9.23Z"/></svg>
          {item.category}
         </span>
         <a href="#">
-            <h5 class="mt-3 mb-6 text-2xl font-semibold tracking-tight text-heading">{item.name}</h5>
+            <h5 className="mt-3 mb-6 text-2xl font-semibold tracking-tight text-heading">{item.name}</h5>
             <h5 class="mt-3 mb-6 text-2xl font-semibold tracking-tight text-heading">{item.price}</h5>
         </a>
-        <a href="#" class="inline-flex items-center text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
-   Add to cart      
-            <svg class="w-4 h-4 ms-1.5 rtl:rotate-180 -me-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m14 0-4 4m4-4-4-4"/></svg>
-        </a>
+     <button
+              onClick={() => addToCart(item)}
+              className="mt-3 bg-pink-500 text-white px-4 py-2 rounded"
+            >
+              Add to Cart
+            </button>
     </div>
       {/* Empty state */}
       {filteredProducts.length === 0 && (
@@ -251,8 +327,10 @@ const filteredProducts = products.filter((item) =>
 </div>
    
    ))}
+   
 
 </div>
+
 
 
 
@@ -420,19 +498,19 @@ const filteredProducts = products.filter((item) =>
       <div className="flex flex-wrap -m-2">
         <div className="p-2 w-1/2">
           <div className="relative">
-            <label for="name" className="leading-7 text-sm text-gray-600">Name</label>
+            <label htmlFor="name" className="leading-7 text-sm text-gray-600">Name</label>
             <input type="text" id="name" name="name" className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"/>
           </div>
         </div>
         <div className="p-2 w-1/2">
           <div className="relative">
-            <label for="email" className="leading-7 text-sm text-gray-600">Email</label>
+            <label htmlFor="email" className="leading-7 text-sm text-gray-600">Email</label>
             <input type="email" id="email" name="email" className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"/>
           </div>
         </div>
         <div className="p-2 w-full">
           <div className="relative">
-            <label for="message" className="leading-7 text-sm text-gray-600">Message</label>
+            <label htmlFor="message" className="leading-7 text-sm text-gray-600">Message</label>
             <textarea id="message" name="message" className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"></textarea>
           </div>
         </div>

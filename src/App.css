@@ -2,19 +2,23 @@
 
 .logo{
   font-family: "Meow Script", cursive;
-  font-size: 47px;
+  font-size: 45px;
   color:#641226;
   font-weight:bolder;
+   margin-right: 25px;
+  gap: 10px;
 
 }
 .search{
   border-radius: 20px;
-  color: white;
+ width: 300px;
+  color: rgb(17, 17, 17);
 }
 .ul{
-  gap: 2px;
+  gap: 25px;
   font-weight: bold;
-  font-size: 19px;
+  font-size: 18px;
+  color: white;
   /* text-decoration:underline white; */
 }
 
